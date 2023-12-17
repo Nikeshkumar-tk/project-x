@@ -5,7 +5,6 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const mongoDAL = new MongoDAL();
-       
     
         // Assuming you want to create a review item
         const createArg = {

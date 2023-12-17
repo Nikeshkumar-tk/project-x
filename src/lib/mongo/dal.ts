@@ -35,7 +35,7 @@ export class MongoDAL {
         const model = mongoose.model(resource);
         const newDoc = new model(arg.data);
         const result = JSON.parse(JSON.stringify(newDoc));
-        await newDoc.save();
+        await result.save();
         return result;
       }
      

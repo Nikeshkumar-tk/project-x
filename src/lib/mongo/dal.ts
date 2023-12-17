@@ -19,16 +19,16 @@ export class MongoDAL {
     this.createItems = this.createItems.bind(this);
     this.createOrUpdateItem = this.createOrUpdateItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
-    this.getItemCount = this.getItemCount.bind(this);
     this.getListOfItems = this.getListOfItems.bind(this)
-    this.mongoDBUrl = process.env.mongoUrl;
+
+    this.mongoDBUrl = process.env.mongoDBUrl!;
   }
 
   async createItem(resource: string, arg: IMongoDALCreateArg) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+     
+      const model = mongoose.model(resource);
       if (arg.constraints?.unique) {
         const uniqQuery = MongoQueryBuilder.checkUnique(arg.constraints.unique);
         const result = await model.findOne(uniqQuery);
@@ -51,11 +51,11 @@ export class MongoDAL {
     }
   }
 
-  async insertMany({ resource, data }) {
+  async insertMany({ resource, data }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+
+      const model = mongoose.model(resource);
       const result = await model.insertMany(data);
       return result;
     } catch (err) {
@@ -66,14 +66,14 @@ export class MongoDAL {
 
 
 
-  async deleteMany({ resource, filters }) {
+  async deleteMany({ resource, filters }:any) {
     try {
       const conditions = {
         $or: filters,
       };
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+   
+      const model = mongoose.model(resource);
       const result = await model.deleteMany(conditions);
       return result;
     } catch (err) {
@@ -81,11 +81,11 @@ export class MongoDAL {
       throw err;
     }
   }
-  async createOrUpdateItem({ resource, queryObj, data }) {
+  async createOrUpdateItem({ resource, queryObj, data }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+
+      const model = mongoose.model(resource);
       const result = await model.findOneAndUpdate(
         queryObj,
         { $set: data },
@@ -100,11 +100,11 @@ export class MongoDAL {
 
 
 
-  async createItems(resource, data) {
+  async createItems(resource:any, data:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+     
+      const model = mongoose.model(resource);
       const result = await model.insertMany(data);
       return result;
     } catch (err) {
@@ -113,11 +113,11 @@ export class MongoDAL {
     }
   }
 
-  async getItem({ resource, queryObj }) {
+  async getItem({ resource, queryObj }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+
+      const model = mongoose.model(resource);
       const result = await model.findOne(queryObj);
       return result;
     } catch (err) {
@@ -126,11 +126,11 @@ export class MongoDAL {
     }
   }
 
-  async deleteItem({ resource, queryObj }) {
+  async deleteItem({ resource, queryObj }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+ 
+      const model = mongoose.model(resource);
       const result = await model.deleteOne(queryObj);
       return result;
     } catch (err) {
@@ -144,89 +144,33 @@ export class MongoDAL {
 
 
 
-  async getItemList({ resource, queryObj }) {
+  async getItemList({ resource, queryObj }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+ 
+      const model = mongoose.model(resource);
       let result;
-      if (!queryObj || Object.entries(queryObj).length === 0) {
+   
         result = await model.find({}).sort({ createdAt: "desc" }).limit(200);
-        result.totalRows = await model.estimatedDocumentCount();
+      
         return result;
-      } else if (queryObj.isSubString) {
-        delete queryObj["isSubString"];
-        const entries = Object.entries(queryObj);
-        const attributeName = entries[0][0];
-        const searchValue = entries[0][1] as string;
-        const mongoQuery = {};
-        mongoQuery[attributeName] = new RegExp(searchValue, "i");
-        result = await model.find(mongoQuery).limit(200);
-        result.totalRows = await model.find(mongoQuery).countDocuments();
-        return result;
-      } else if (queryObj.isPrefix) {
-        delete queryObj["isPrefix"];
-        const entries = Object.entries(queryObj);
-        const attributeName = entries[0][0];
-        const searchValue = entries[0][1] as string;
-        const mongoQuery = {};
-        mongoQuery[attributeName] = new RegExp("^" + searchValue, "i");
-        result = await model.find(mongoQuery).limit(200);
-        result.totalRows = await model.find(mongoQuery).countDocuments();
-        return result;
-      } else {
-        result = await model.find(queryObj).limit(200);
-        return result;
-      }
+     
     } catch (err) {
       console.log(err);
       throw err;
     }
   }
 
-  async queryListWithOr({ resource, filters }) {
-    try {
-      await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
-      const conditions = {
-        $or: filters,
-      };
-      const result = await model.find(conditions);
-      return result;
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  }
-
-  async getItemCount({ resource, queryObj }) {
-    try {
-      await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
-      if (!queryObj || Object.entries(queryObj).length === 0) {
-        return await model.estimatedDocumentCount();
-      } else {
-        const entries = Object.entries(queryObj);
-        const attributeName = entries[0][0];
-        const searchValue = entries[0][1] as string;
-        const mongoQuery = {};
-        mongoQuery[attributeName] = new RegExp("^" + searchValue, "i");
-        return await model.find(mongoQuery).countDocuments();
-      }
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  }
+ 
 
 
-  async findOne({ resource, queryObj }) {
+
+
+  async findOne({ resource, queryObj }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+    
+      const model = mongoose.model(resource);
       return await model.findOne(queryObj);
     } catch (error) {
       console.log(error);
@@ -234,11 +178,11 @@ export class MongoDAL {
     }
   }
 
-  async patchItem({ resource, filter, attributesToUpdate }) {
+  async patchItem({ resource, filter, attributesToUpdate }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+   
+      const model = mongoose.model(resource);
       const result = await model.findOneAndUpdate(filter, attributesToUpdate, {
         new: true,
         upsert: true,
@@ -252,11 +196,11 @@ export class MongoDAL {
 
  
   
-  async getListOfItems({ resource, query }) {
+  async getListOfItems({ resource, query }:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const collectionName = config.mongoCollectionMap[resource];
-      const model = mongoose.model(collectionName);
+  
+      const model = mongoose.model(resource);
       const result = await model.find(query).sort({ createdAt: -1 })
       return result
     } catch (error) {

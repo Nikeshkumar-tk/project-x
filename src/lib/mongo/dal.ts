@@ -5,11 +5,6 @@ import { IMongoDALCreateArg } from "./mongo";
 import { HTTP_RESOURCES } from "./resources";
 
 //Review schema defenition
-var reviewSchema= new mongoose.Schema({
-user:String,
-ReviewDescription:String
-})
-mongoose.model(HTTP_RESOURCES.reviews,reviewSchema)
 
 export class MongoDAL {
   public mongoDBUrl: string;
@@ -26,18 +21,18 @@ export class MongoDAL {
     this.mongoDBUrl = process.env.MONGO_DB_URL || "mongodb+srv://vinayaksukhalal:1234@cluster0.opl3kke.mongodb.net/ProjectX";
   }
 
-  async createItem(resource: string, arg: IMongoDALCreateArg) {
+  async createItem( arg: any,model:any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
-      const modelName = HTTP_RESOURCES.reviews;
-      if (!mongoose.modelNames().includes(modelName)) {
+     
+  
         // Create the model if it doesn't exist
-        const model = mongoose.model(resource);
+       
         const newDoc = new model(arg.data);
         const result = JSON.parse(JSON.stringify(newDoc));
-        await result.save();
+        await newDoc.save();
         return result;
-      }
+   
      
     //   if (arg.constraints?.unique) {
     //     const uniqQuery = MongoQueryBuilder.checkUnique(arg.constraints.unique);
@@ -150,11 +145,11 @@ export class MongoDAL {
 
 
 
-  async getItemList({ resource, queryObj }:any) {
+  async getItemList( model :any) {
     try {
       await mongoose.connect(this.mongoDBUrl);
  
-      const model = mongoose.model(resource);
+     
       let result;
    
         result = await model.find({}).sort({ createdAt: "desc" }).limit(200);

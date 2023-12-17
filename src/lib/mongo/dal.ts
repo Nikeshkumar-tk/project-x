@@ -1,13 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 import { IMongoDALCreateArg } from "./mongo";
-
-import { DB_ERRORS,DB_ERROR_MESSAGES } from "./apiErrors";
 // import { config } from "../../config";
-import { MongoQueryBuilder } from "./queryBuilder";
+
 import { HTTP_RESOURCES } from "./resources";
 
-//Audit schema defenition
-
+//Review schema defenition
+var reviewSchema= new mongoose.Schema({
+user:String,
+ReviewDescription:String
+})
+mongoose.model(HTTP_RESOURCES.reviews,reviewSchema)
 
 export class MongoDAL {
   public mongoDBUrl: string;
@@ -21,32 +23,36 @@ export class MongoDAL {
     this.deleteItem = this.deleteItem.bind(this);
     this.getListOfItems = this.getListOfItems.bind(this)
 
-    this.mongoDBUrl = process.env.mongoDBUrl!;
+    this.mongoDBUrl = process.env.MONGO_DB_URL || "mongodb+srv://vinayaksukhalal:1234@cluster0.opl3kke.mongodb.net/ProjectX";
   }
 
   async createItem(resource: string, arg: IMongoDALCreateArg) {
     try {
       await mongoose.connect(this.mongoDBUrl);
+      const modelName = HTTP_RESOURCES.reviews;
+      if (!mongoose.modelNames().includes(modelName)) {
+        // Create the model if it doesn't exist
+        const model = mongoose.model(resource);
+        const newDoc = new model(arg.data);
+        const result = JSON.parse(JSON.stringify(newDoc));
+        await newDoc.save();
+        return result;
+      }
      
-      const model = mongoose.model(resource);
-      if (arg.constraints?.unique) {
-        const uniqQuery = MongoQueryBuilder.checkUnique(arg.constraints.unique);
-        const result = await model.findOne(uniqQuery);
-        if (result) {
-          const errorObj = new Error();
-          errorObj.message = DB_ERROR_MESSAGES.uniqueCheckFailed;
-          errorObj.name = DB_ERRORS.uniqueCheckFailed;
-          throw errorObj;
-        }
-      }
-      const newDoc = new model(arg.data);
-      const result = JSON.parse(JSON.stringify(newDoc));
-      await newDoc.save();
-      return result;
+    //   if (arg.constraints?.unique) {
+    //     const uniqQuery = MongoQueryBuilder.checkUnique(arg.constraints.unique);
+    //     const result = await model.findOne(uniqQuery);
+    //     if (result) {
+    //       const errorObj = new Error();
+    //       errorObj.message = DB_ERROR_MESSAGES.uniqueCheckFailed;
+    //       errorObj.name = DB_ERRORS.uniqueCheckFailed;
+    //       throw errorObj;
+    //     }
+    //   }
+    
     } catch (err) {
-      if (err.code === 11000) {
-        return "item already exists";
-      }
+        console.log(err);
+
       throw err;
     }
   }

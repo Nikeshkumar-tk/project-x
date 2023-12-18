@@ -1,41 +1,45 @@
-import { MongoDAL } from "@/lib/mongo/dal";
-import { HTTP_RESOURCES } from "@/lib/mongo/resources";
-import mongoose from "mongoose";
-const mongoDAL = new MongoDAL();
-var reviewSchema = new mongoose.Schema({
-  user: String,
-  ReviewDescription: String,
-});
-var reviewModal = mongoose.model(HTTP_RESOURCES.reviews, reviewSchema);
+import { mongo } from "@/lib/mongo/dal";
+import {z, ZodError} from 'zod'
 
-export async function GET(req: Request) {
-  const list = await mongoDAL.getItemList(reviewModal);
+const createReviewRequestSchema = z.object({
+  user: z.string(),
+  reviewDescription: z.string(),
+})
 
-  return Response.json(list);
-}
+
 export async function POST(req: Request) {
   try {
-    const RequestBody = await req.json();
+    const requestBody = createReviewRequestSchema.parse(await req.json());
 
-    const createArg = {
-      collectionName: "reviews", 
-      data: {
-        user: RequestBody.user,
-        ReviewDescription: RequestBody.ReviewDescription,
-      },
-    };
+    if(!requestBody.reviewDescription || !requestBody.user) {
+      return Response.json({
+        message: "user or reviewDescription is missing",
+      });
+    }
 
-    const createdItem = await mongoDAL.createItem(
-      createArg,
-      reviewModal
-    );
+    const createdItem = await mongo.createItem({
+      resource: "reviews",
+      data: { ...requestBody },
+    });
 
     return Response.json({
       message: "Review created successfully",
       createdItem,
     });
+
   } catch (error) {
-    console.error(error);
-    return Response.json({ error: "Internal server error" });
+
+    if(error instanceof ZodError) {
+      return Response.json({
+        message: "",
+      });
+    }
+
+    if (error instanceof Error) {
+      return Response.json({
+        message: error.cause,
+      });
+    }
+    return new Response("Something went wrong", { status: 500 });
   }
 }

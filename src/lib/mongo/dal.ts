@@ -1,5 +1,5 @@
 import { getEnv } from "@/config/env";
-import { MongoCreateItem } from "@/types/mongo";
+import { MongoCreateItem,MongoGetItem } from "@/types/mongo";
 import mongoose from "mongoose";
 import { initializeSchemas } from "./schema";
 
@@ -27,21 +27,16 @@ export class MongoDAL {
   }
 
 
-  // async getItemList(model: any) {
-  //   try {
-  //     await mongoose.connect(this.mongoDBUrl);
-
-  //     let result;
-
-  //     result = await model.find({}).sort({ createdAt: "desc" }).limit(200);
-
-  //     return result;
-
-  //   } catch (err) {
-  //     console.log(err);
-  //     throw err;
-  //   }
-  // }
+  async getItemList({  resource }:MongoGetItem) {
+    try {
+      const model = mongoose.model(resource);
+      const result = await model.find({});
+      return result;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
 
 }
 

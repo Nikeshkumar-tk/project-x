@@ -1,15 +1,44 @@
 import { mongo } from "@/lib/mongo/dal";
-import {z, ZodError} from 'zod'
+import {string, z, ZodError} from 'zod'
 
-const createReviewRequestSchema = z.object({
-  user: z.string(),
-  reviewDescription: z.string(),
+const createProjectSchema = z.object({
+  projectName: z.string(),
+  projectDescription: z.string(),
+  mentorName: z.string(),
+  techStacks:z.string(),
+  students:z.string().array(),
+  startDate:z.date(),
+  endDate:z.date()
 })
+
+// export async function GET(req:Request){
+//   try{
+//     const reviewList=await mongo.getItemList({ resource: "reviews",})
+//     return Response.json({reviewList})
+   
+
+//   }
+//   catch (error) {
+
+//     if(error instanceof ZodError) {
+//       return Response.json({
+//         message: "",
+//       });
+//     }
+
+//     if (error instanceof Error) {
+//       return Response.json({
+//         message: error.cause,
+//       });
+//     }
+//     return new Response("Something went wrong", { status: 500 });
+//   }
+// }
 
 export async function GET(req:Request){
   try{
-    const reviewList=await mongo.getItemList({ resource: "reviews",})
-    return Response.json({reviewList})
+    const projectList=await mongo.getItemList({ resource: "projects",})
+    return Response.json({projectList})
    
 
   }
@@ -33,16 +62,16 @@ export async function GET(req:Request){
 
 export async function POST(req: Request) {
   try {
-    const requestBody = createReviewRequestSchema.parse(await req.json());
+    const requestBody = createProjectSchema.parse(await req.json());
 
-    if(!requestBody.reviewDescription || !requestBody.user) {
+    if(!requestBody.projectName || !requestBody.mentorName) {
       return Response.json({
         message: "user or reviewDescription is missing",
       });
     }
 
     const createdItem = await mongo.createItem({
-      resource: "reviews",
+      resource: "projects",
       data: { ...requestBody },
     });
 

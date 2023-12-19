@@ -1,36 +1,19 @@
-import { DefaultUser, type NextAuthOptions } from "next-auth";
+import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google";
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
-import clientPromise from "@/lib/mongo/next-auth-adapter";
-
-type User = DefaultUser & {
-    isAccountConfirmed: boolean
-    sub: string
-    attendedQuizs: Array<Record<string, string>>
-}
-
-declare module "next-auth" {
-    interface Session {
-        user: User
-    }
-}
-
-export const authOptions: NextAuthOptions = {
-    // Configure one or more authentication providers
-    adapter: MongoDBAdapter(clientPromise),
+export const authOptions = {
     providers: [
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+        GithubProvider({
+         clientId: process.env.GITHUB_ID,
+        clientSecret:process.env.GITHUB_SECRET,
+        
         }),
-    ],
-    session: {
-        strategy: "jwt",
-    },
-    callbacks: {
-        async redirect({ url, baseUrl }) {
-            return baseUrl
-        }
-    },
-    secret: process.env.NEXTAUTH_SECRET
-}
+        GoogleProvider({
+    
+            clientId: process.env.GITHUB_ID ,
+            clientSecret:process.env.GITHUB_SECRET,
+            }),
+    
+        // ...add more providers here
+      ],
+  }
+  

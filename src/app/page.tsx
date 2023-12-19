@@ -5,7 +5,7 @@ import Image from 'next/image'
 export default function Home() {
   return (
     <main className="">
-      <Button className='animate-bounce' variant={"default"} onClick={() => signIn("google")}>Sign In</Button>
+      <Button className='animate-bounce' variant={"default"}>Sign In</Button>
     </main>
   )
 }

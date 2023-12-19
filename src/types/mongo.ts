@@ -27,3 +27,7 @@ export type MongoCreateItem = {
     resource:keyof typeof HTTP_RESOURCES,
     data:Record<string,any>,
 }
+export type MongoGetItem = {
+    resource:keyof typeof HTTP_RESOURCES,
+   
+}

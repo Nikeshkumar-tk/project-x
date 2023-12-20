@@ -2,13 +2,13 @@ import { env } from "@/env.mjs"
 import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import { DefaultUser, type NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import clientPromise from "@/lib/mongo/next-auth-adapter"
+import { APP_ROLES } from "./auth";
 
 type User = DefaultUser & {
-  isAccountConfirmed: boolean
-  sub: string
-  attendedQuizs: Array<Record<string, string>>
+  role: keyof typeof APP_ROLES
 }
 
 declare module "next-auth" {
@@ -24,6 +24,23 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials, req) {
+
+        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
+
+        if (user) {
+          return user
+        } else {
+          return null
+        }
+      }
+    })
   ],
   session: {
     strategy: "jwt",

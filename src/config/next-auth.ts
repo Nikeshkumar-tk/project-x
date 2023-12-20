@@ -2,6 +2,7 @@ import { DefaultUser, type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import clientPromise from "@/lib/mongo/next-auth-adapter";
+import { env } from "@/env.mjs"
 
 type User = DefaultUser & {
     isAccountConfirmed: boolean
@@ -16,12 +17,11 @@ declare module "next-auth" {
 }
 
 export const authOptions: NextAuthOptions = {
-    // Configure one or more authentication providers
     adapter: MongoDBAdapter(clientPromise),
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET
         }),
     ],
     session: {
@@ -32,5 +32,5 @@ export const authOptions: NextAuthOptions = {
             return baseUrl
         }
     },
-    secret: process.env.NEXTAUTH_SECRET
+    secret: env.NEXTAUTH_SECRET
 }

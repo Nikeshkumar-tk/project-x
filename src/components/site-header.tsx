@@ -18,17 +18,16 @@ import {
 // import { CartSheet } from "@/components/checkout/cart-sheet"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
+
 import { ModeToggle } from "./mode-toggle"
+
 // import { MobileNav } from "@/components/layouts/mobile-nav"
 // import { ProductsCommandMenu } from "@/components/products-command-menu"
 
-
-
 export function SiteHeader() {
-//   const initials = `${user?.firstName?.charAt(0) ?? ""} ${
-//     user?.lastName?.charAt(0) ?? ""
-//   }`
-
+  //   const initials = `${user?.firstName?.charAt(0) ?? ""} ${
+  //     user?.lastName?.charAt(0) ?? ""
+  //   }`
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">

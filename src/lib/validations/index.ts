@@ -7,7 +7,7 @@ export const teacherSchema = z.object({
     image: z.string().url(),
 })
 
-export const ReviewSchema = z.object({
+export const reviewSchema = z.object({
     user: z.string(),
     reviewDescription: z.string(),
   })

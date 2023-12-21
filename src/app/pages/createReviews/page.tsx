@@ -26,14 +26,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ReviewSchema } from "@/lib/validations"
+import { reviewSchema } from "@/lib/validations"
  
 
 
 function createReviews() {
 
-  const form = useForm<z.infer<typeof ReviewSchema>>({
-    resolver: zodResolver(ReviewSchema),
+  const form = useForm<z.infer<typeof reviewSchema>>({
+    resolver: zodResolver(reviewSchema),
     defaultValues: {
       user: "",
       reviewDescription:""
@@ -43,7 +43,7 @@ function createReviews() {
   })
  
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof ReviewSchema>) {
+  async function onSubmit(values: z.infer<typeof reviewSchema>) {
     
     await fetch("http://localhost:3000/api/reviews",{
         method:"POST",

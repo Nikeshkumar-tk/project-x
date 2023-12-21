@@ -1,11 +1,12 @@
 import { env } from "@/env.mjs"
 import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import { DefaultUser, type NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
-import CredentialsProvider from "next-auth/providers/credentials";
 
 import clientPromise from "@/lib/mongo/next-auth-adapter"
-import { APP_ROLES } from "./auth";
+
+import { APP_ROLES } from "./auth"
 
 type User = DefaultUser & {
   role: keyof typeof APP_ROLES
@@ -28,10 +29,9 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email", placeholder: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-
         const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
 
         if (user) {
@@ -39,8 +39,8 @@ export const authOptions: NextAuthOptions = {
         } else {
           return null
         }
-      }
-    })
+      },
+    }),
   ],
   session: {
     strategy: "jwt",

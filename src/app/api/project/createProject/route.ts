@@ -1,6 +1,11 @@
 import { mongo } from "@/lib/mongo/dal";
 import {string, z, ZodError} from 'zod'
 
+
+// Define the schema for the array of timeline objects
+
+
+
 const createProjectSchema = z.object({
   projectName: z.string(),
   projectDescription: z.string(),
@@ -8,8 +13,24 @@ const createProjectSchema = z.object({
   techStacks:z.string(),
   students:z.string().array(),
   startDate:z.date(),
-  endDate:z.date()
+  timeline: z.array(
+    z.object({
+      date: z.string(), 
+      stateDescription: z.string(),
+    })
+  ),
+  
 })
+TimeLine:[{
+  date:"12-12-2023",
+  stateDescription:"Project Created"
+},
+{
+  date:"12-12-2023",
+  stateDescription:"Project Created"
+},
+]
+
 
 // export async function GET(req:Request){
 //   try{

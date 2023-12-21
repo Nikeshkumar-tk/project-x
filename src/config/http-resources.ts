@@ -1,4 +1,5 @@
 export const HTTP_RESOURCES = {
     reviews: "reviews",
-    projects:"projects"
+    projects:"projects",
+    teachers:"teachers",
 }

@@ -1,15 +1,13 @@
 import { mongo } from "@/lib/mongo/dal";
+import { createReviewRequestSchema } from "@/lib/validations";
 import {z, ZodError} from 'zod'
+import { getServerErrorFromUnknown } from "@/lib/error";
 
-const createReviewRequestSchema = z.object({
-  user: z.string(),
-  reviewDescription: z.string(),
-})
 
 export async function GET(req:Request){
   try{
-    const reviewList=await mongo.getItemList({ resource: "reviews",})
-    return Response.json({reviewList})
+    const reviewList=await mongo.getItemList<z.infer<typeof createReviewRequestSchema>>({ resource: "reviews",})
+    return Response.json(reviewList)
    
 
   }
@@ -26,7 +24,8 @@ export async function GET(req:Request){
         message: error.cause,
       });
     }
-    return new Response("Something went wrong", { status: 500 });
+    const Errors = getServerErrorFromUnknown(error)
+        return Response.json(Errors)
   }
 }
 

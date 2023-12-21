@@ -1,6 +1,5 @@
 import { env } from "@/env.mjs"
-import { Document } from "mongodb"
-import mongoose from "mongoose"
+import mongoose, { ObjectId } from "mongoose"
 
 import { MongoCreateItem, MongoGetItem } from "@/types/mongo"
 
@@ -28,7 +27,7 @@ export class MongoDAL {
   async createItem<T>({
     data,
     resource,
-  }: MongoCreateItem): Promise<Document & T> {
+  }: MongoCreateItem): Promise<{ _id: ObjectId } & T> {
     try {
       const model = getMongoSchema(resource)
       const result = await model.create(data)
@@ -41,7 +40,7 @@ export class MongoDAL {
 
   async getItemList({ resource }: MongoGetItem) {
     try {
-      const model = mongoose.model(resource)
+      const model = getMongoSchema(resource)
       const result = await model.find({})
       return result
     } catch (err) {

@@ -1,21 +1,33 @@
-import { getEnv } from "@/config/env";
-import { MongoCreateItem,MongoGetItem } from "@/types/mongo";
+import { env } from "@/env.mjs";
+import { MongoCreateItem, MongoGetItem } from "@/types/mongo";
 import mongoose from "mongoose";
 import { initializeSchemas } from "./schema";
+import { Document } from "mongodb";
 
-
-const env = getEnv()
-mongoose.connect(env.MONGODB_URI)
 
 initializeSchemas()
 
 export class MongoDAL {
-  constructor() {
+  private static instance: MongoDAL;
+  private constructor() {
+    this.init()
     // this.getItemList = this.getItemList.bind(this);
     this.createItem = this.createItem.bind(this);
   }
 
-  async createItem({ data, resource }: MongoCreateItem) {
+  async init(){
+    await mongoose.connect(env.MONGODB_URI)
+    initializeSchemas()
+  }
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new MongoDAL();
+    }
+    return this.instance;
+  }
+
+  async createItem<T>({ data, resource }: MongoCreateItem): Promise<Document & T> {
     try {
       const model = mongoose.model(resource);
       const result = await model.create(data);
@@ -40,4 +52,5 @@ export class MongoDAL {
 
 }
 
-export const mongo = new MongoDAL();
+export const mongo =  MongoDAL.getInstance();
+

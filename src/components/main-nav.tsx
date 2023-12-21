@@ -19,7 +19,7 @@ import { Icons } from "@/components/icons"
 
 interface MainNavProps {
   items?: MainNavItem[]
- }
+}
 
 export function MainNav({ items }: MainNavProps) {
   return (

@@ -1,12 +1,12 @@
 import { mongo } from "@/lib/mongo/dal";
-import { createReviewRequestSchema } from "@/lib/validations";
+import { ReviewSchema } from "@/lib/validations";
 import {z, ZodError} from 'zod'
 import { getServerErrorFromUnknown } from "@/lib/error";
 
 
 export async function GET(req:Request){
   try{
-    const reviewList=await mongo.getItemList<z.infer<typeof createReviewRequestSchema>>({ resource: "reviews",})
+    const reviewList=await mongo.getItemList<z.infer<typeof ReviewSchema>>({ resource: "reviews",})
     return Response.json(reviewList)
    
 
@@ -32,7 +32,11 @@ export async function GET(req:Request){
 
 export async function POST(req: Request) {
   try {
-    const requestBody = createReviewRequestSchema.parse(await req.json());
+  
+    console.log('Body:', await req.json());
+
+    const requestBody = ReviewSchema.parse(await req.json());
+ 
 
     if(!requestBody.reviewDescription || !requestBody.user) {
       return Response.json({
@@ -40,7 +44,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const createdItem = await mongo.createItem({
+    const createdItem = await mongo.createItem<z.infer<typeof ReviewSchema>>({
       resource: "reviews",
       data: { ...requestBody },
     });

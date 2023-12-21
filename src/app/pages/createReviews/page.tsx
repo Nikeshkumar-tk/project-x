@@ -26,28 +26,32 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ReviewSchema } from "@/lib/validations"
  
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
+
 
 function createReviews() {
-    const [date, setDate] = React.useState<Date>()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+
+  const form = useForm<z.infer<typeof ReviewSchema>>({
+    resolver: zodResolver(ReviewSchema),
     defaultValues: {
-      username: "",
+      user: "",
+      reviewDescription:""
       
     },
+    
   })
  
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof ReviewSchema>) {
+    
+    await fetch("http://localhost:3000/api/reviews",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(values)
+    })
     console.log(values)
+    form.reset();
   }
   return (
     <Form {...form}>
@@ -55,12 +59,12 @@ function createReviews() {
         <FormField
           control={form.control}
           
-          name="username"
+          name="user"
           render={({ field }) => (
             <FormItem>
-              <FormLabel> Project name</FormLabel>
+              <FormLabel> User name</FormLabel>
               <FormControl>
-                <Input placeholder="projects name" {...field} />
+                <Input placeholder="Enter User name" {...field} />
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.
@@ -72,12 +76,12 @@ function createReviews() {
           <FormField
           control={form.control}
           
-          name="username"
+          name="reviewDescription"
           render={({ field }) => (
             <FormItem>
-              <FormLabel> Project Description</FormLabel>
+              <FormLabel> Review Description</FormLabel>
               <FormControl>
-                <Input placeholder="projects" {...field} />
+                <Input placeholder="Enter review description" {...field} />
               </FormControl>
               {/* <FormDescription>
                 This is your public display name.
@@ -86,53 +90,7 @@ function createReviews() {
             </FormItem>
           )}
         />
-          <FormField
-          control={form.control}
-          
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel> Mentor name</FormLabel>
-              <FormControl>
-                <Input placeholder="projects" {...field} />
-              </FormControl>
-              {/* <FormDescription>
-                This is your public display name.
-              </FormDescription> */}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div>
-        <label htmlFor="datePicker" className="block text-sm font-medium text-white-700">
-    Select a Date:
-  </label>
-        <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          className={cn(
-            "w-[280px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
-      </PopoverContent>
-    </Popover>
-        </div>
-      
-       
-    <br/>
+        
         <Button type="submit">Submit</Button>
     
            

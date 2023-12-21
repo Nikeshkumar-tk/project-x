@@ -29,6 +29,7 @@ export class MongoDAL {
 
   async createItem<T>({ data, resource }: MongoCreateItem): Promise<Document & T> {
     try {
+      
       const model = mongoose.model(resource);
       const result = await model.create(data);
       return result;

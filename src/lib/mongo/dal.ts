@@ -1,11 +1,10 @@
 import { env } from "@/env.mjs";
 import { MongoCreateItem, MongoGetItem } from "@/types/mongo";
 import mongoose from "mongoose";
-import { initializeSchemas } from "./schema";
 import { Document } from "mongodb";
+import { getMongoSchema } from "./utils";
 
 
-initializeSchemas()
 
 export class MongoDAL {
   private static instance: MongoDAL;
@@ -17,7 +16,6 @@ export class MongoDAL {
 
   async init(){
     await mongoose.connect(env.MONGODB_URI)
-    initializeSchemas()
   }
 
   static getInstance() {
@@ -29,7 +27,7 @@ export class MongoDAL {
 
   async createItem<T>({ data, resource }: MongoCreateItem): Promise<Document & T> {
     try {
-      const model = mongoose.model(resource);
+      const model = getMongoSchema(resource);
       const result = await model.create(data);
       return result;
     } catch (err) {

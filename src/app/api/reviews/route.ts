@@ -1,7 +1,8 @@
-import { mongo } from "@/lib/mongo/dal";
-import { reviewSchema } from "@/lib/validations";
-import {z, ZodError} from 'zod'
-import { getServerErrorFromUnknown } from "@/lib/error";
+import { z, ZodError } from "zod"
+
+import { mongo } from "@/lib/mongo/dal"
+import { reviewSchema } from "@/lib/validations"
+import { getServerErrorFromUnknown } from "@/lib/error"
 
 
 export async function GET(req:Request){
@@ -16,19 +17,17 @@ export async function GET(req:Request){
     if(error instanceof ZodError) {
       return Response.json({
         message: "",
-      });
+      })
     }
 
     if (error instanceof Error) {
       return Response.json({
         message: error.cause,
-      });
+      })
     }
-    const Errors = getServerErrorFromUnknown(error)
-        return Response.json(Errors)
+    return new Response("Something went wrong", { status: 500 })
   }
 }
-
 
 export async function POST(req: Request) {
   try {
@@ -36,16 +35,16 @@ export async function POST(req: Request) {
     const requestBody = reviewSchema.parse(await req.json());
     
 
-    if(!requestBody.reviewDescription || !requestBody.user) {
+    if (!requestBody.reviewDescription || !requestBody.user) {
       return Response.json({
         message: "user or reviewDescription is missing",
-      });
+      })
     }
 
     const createdItem = await mongo.createItem<z.infer<typeof reviewSchema>>({
       resource: "reviews",
       data: { ...requestBody },
-    });
+    })
 
     return Response.json({
       message: "Review created successfully",

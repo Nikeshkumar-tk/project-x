@@ -13,7 +13,6 @@ export default function Home() {
         placeholder="blur"
         blurDataURL={heroImage.blurDataURL}
       />
-   
     </main>
   )
 }

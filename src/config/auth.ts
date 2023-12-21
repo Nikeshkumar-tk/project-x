@@ -1,9 +1,9 @@
 export const strategy = {
-    google:"google",
+  google: "google",
 }
 
 export const APP_ROLES = {
-    admin:"admin",
-    teacher:"teacher",
-    student:"student",
+  admin: "admin",
+  teacher: "teacher",
+  student: "student",
 }

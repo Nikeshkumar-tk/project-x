@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const TeacherSchema = z.object({
+export const teacherSchema = z.object({
     name: z.string(),
     email: z.string().email(),
     skills: z.array(z.string()),

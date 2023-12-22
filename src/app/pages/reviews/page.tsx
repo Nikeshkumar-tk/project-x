@@ -4,25 +4,10 @@ import { useState,useEffect } from 'react'
 
 import {
   ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
 } from "@tanstack/react-table"
 import { DataTable } from '@/components/data-table'
  
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
- 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-}
+
  
 
 
@@ -38,7 +23,10 @@ function Reviews() {
     const fetchData = async () => {
       const response = await fetch("/api/reviews")
       const data: Review[] = await response.json()
-      setReviews(data)
+
+      
+      
+    setReviews(data)
      
     }
     fetchData()

@@ -22,13 +22,10 @@ function Reviews() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/api/reviews")
-      const data: Review[] = await response.json()
-
-      
-      
-    setReviews(data)
-     
+      const data = await response.json()
+      setReviews(data.reviewList) // fixed -- set reviews to data.reviewList instead of data
     }
+
     fetchData()
   }, [])
 

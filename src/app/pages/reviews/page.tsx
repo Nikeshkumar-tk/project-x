@@ -1,24 +1,17 @@
 "use client"
-import React from 'react'
-import { useState,useEffect } from 'react'
 
-import {
-  ColumnDef,
-} from "@tanstack/react-table"
-import { DataTable } from '@/components/data-table'
- 
+import { useEffect, useState } from "react"
 
- 
+interface Review {
+  _id: string
+  user: string
+  reviewDescription: string
+  __v: number
+}
 
+export default function Reviews() {
+  const [reviews, setReviews] = useState<Review[]>([])
 
-function Reviews() {
-  interface Reviews {
-    user: string;
-    reviewDescription: number;
-  }
-
-  const [reviews, setReviews] = useState<Reviews[ ]>([])
-  console.log(reviews)
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/api/reviews")
@@ -29,27 +22,34 @@ function Reviews() {
     fetchData()
   }, [])
 
-  const columns: ColumnDef<Reviews>[] = [
-    {
-      accessorKey: "user",
-      header: "Status",
-    },
-    {
-      accessorKey: "reviewDescription",
-      header: "Review Descriptions",
-    },
-   
-  ]
-  console.log(reviews)
- 
-
-  
-
   return (
-    <div className="container mx-auto py-10">
-    <DataTable columns={columns} data={reviews} />
-  </div>
+    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+      <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr
+              className="rounded-lg text-left text-sm font-medium text-gray-700"
+              style={{ fontSize: "0.9674rem" }}
+            >
+              <th className="bg-gray-300 px-4 py-2">User</th>
+              <th className="bg-gray-200 px-4 py-2">Review</th>
+            </tr>
+          </thead>
+          <tbody className="text-sm font-normal text-gray-700">
+            {reviews.map((review: Review) => (
+              <tr
+                key={review._id}
+                className="border-b border-gray-200 py-10 hover:bg-gray-100"
+              >
+                <td className="bg-gray-100 px-4 py-4">{review.user}</td>
+                <td className="bg-gray-100 px-4 py-4">
+                  {review.reviewDescription}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }
-
-export default Reviews

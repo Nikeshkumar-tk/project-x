@@ -34,6 +34,7 @@ const formSchema = z.object({
 
 export function createProject() {
   const [date, setDate] = React.useState<Date>()
+  const [timelineEntries, setTimelineEntries] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,6 +48,10 @@ export function createProject() {
     // ✅ This will be type-safe and validated.
     console.log(values)
   }
+
+  const addTimelineEntry = () => {
+    setTimelineEntries([...timelineEntries, ""]);
+  };
 
   return (
     <Form {...form}>
@@ -131,6 +136,31 @@ export function createProject() {
               />
             </PopoverContent>
           </Popover>
+        </div>
+        
+         {/* Timeline */}
+         <div className="space-y-3">
+          <label className="text-white-700 block text-sm font-medium">
+            Timeline:
+          </label>
+          {timelineEntries.map((entry, index) => (
+            <div key={index}>
+              <input
+                type="text"
+                placeholder="Timeline entry"
+                value={entry}
+                onChange={(e) => {
+                  const updatedEntries = [...timelineEntries];
+                  updatedEntries[index] = e.target.value;
+                  setTimelineEntries(updatedEntries);
+                }}
+                className="p-2 border rounded"
+              />
+            </div>
+          ))}
+          <Button type="button" onClick={addTimelineEntry}>
+            Add Timeline Entry
+          </Button>
         </div>
 
         <br />

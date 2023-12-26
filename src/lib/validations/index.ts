@@ -11,3 +11,16 @@ export const reviewSchema = z.object({
     user: z.string(),
     reviewDescription: z.string(),
   })
+
+  export const createProjectSchema = z.object({
+    // projects_name: z.string(),
+    // projects_description: z.string(),
+    // mentor_name: z.string(),
+    timelines: z.array(
+        z.object({
+          description: z.string(),
+          event_date: z.string(), 
+        })
+      ),
+
+  })

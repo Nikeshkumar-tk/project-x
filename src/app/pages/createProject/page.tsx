@@ -1,11 +1,11 @@
 "use client"
 
-// components/DynamicInputForm.js
+
 import React from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-
+import { createProjectSchema } from '@/lib/validations';
 const DynamicInputForm = () => {
-  const { register, control, handleSubmit, reset } = useForm({
+  const { register, control, handleSubmit, reset } = useForm <z.infer<typeof createProjectSchema>>({
     defaultValues: {
       items: [{ name: '', date: '' }],
     },

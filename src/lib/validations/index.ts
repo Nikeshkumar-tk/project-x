@@ -13,9 +13,9 @@ export const reviewSchema = z.object({
   })
 
   export const createProjectSchema = z.object({
-    // projects_name: z.string(),
-    // projects_description: z.string(),
-    // mentor_name: z.string(),
+    projects_name: z.string(),
+    projects_description: z.string(),
+    mentor_name: z.string(),
     timelines: z.array(
         z.object({
           description: z.string(),

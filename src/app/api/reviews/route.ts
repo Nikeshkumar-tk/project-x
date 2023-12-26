@@ -1,5 +1,7 @@
+import { getServerSession } from "next-auth"
 import { z, ZodError } from "zod"
 
+import { authOptions } from "@/config/next-auth"
 import { mongo } from "@/lib/mongo/dal"
 
 const createReviewRequestSchema = z.object({
@@ -29,6 +31,12 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return Response.json({
+        message: "Unauthorized",
+      })
+    }
     const requestBody = createReviewRequestSchema.parse(await req.json())
 
     if (!requestBody.reviewDescription || !requestBody.user) {

@@ -3,18 +3,20 @@ import { z, ZodError } from "zod"
 
 import { authOptions } from "@/config/next-auth"
 import { mongo } from "@/lib/mongo/dal"
+import { reviewSchema } from "@/lib/validations"
+import { getServerErrorFromUnknown } from "@/lib/error"
 
-const createReviewRequestSchema = z.object({
-  user: z.string(),
-  reviewDescription: z.string(),
-})
 
-export async function GET(req: Request) {
-  try {
-    const reviewList = await mongo.getItemList({ resource: "reviews" })
-    return Response.json({ reviewList })
-  } catch (error) {
-    if (error instanceof ZodError) {
+export async function GET(req:Request){
+  try{
+    const reviewList=await mongo.getItemList<z.infer<typeof reviewSchema>>({ resource: "reviews",})
+    return Response.json(reviewList)
+   
+
+  }
+  catch (error) {
+
+    if(error instanceof ZodError) {
       return Response.json({
         message: "",
       })
@@ -31,21 +33,18 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+  
+    const requestBody = reviewSchema.parse(await req.json());
+    
     const session = await getServerSession(authOptions)
     if (!session) {
       return Response.json({
         message: "Unauthorized",
       })
     }
-    const requestBody = createReviewRequestSchema.parse(await req.json())
 
-    if (!requestBody.reviewDescription || !requestBody.user) {
-      return Response.json({
-        message: "user or reviewDescription is missing",
-      })
-    }
 
-    const createdItem = await mongo.createItem({
+    const createdItem = await mongo.createItem<z.infer<typeof reviewSchema>>({
       resource: "reviews",
       data: { ...requestBody },
     })
@@ -53,19 +52,11 @@ export async function POST(req: Request) {
     return Response.json({
       message: "Review created successfully",
       createdItem,
-    })
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return Response.json({
-        message: "",
-      })
-    }
+    });
 
-    if (error instanceof Error) {
-      return Response.json({
-        message: error.cause,
-      })
-    }
-    return new Response("Something went wrong", { status: 500 })
+  } catch (e) {
+
+    const error = getServerErrorFromUnknown(e)
+    return Response.json(error)
   }
 }

@@ -12,9 +12,9 @@ export interface IMongoDALQueryArg {
 }
 
 export interface IMongoDALPatchArg {
+  resource: keyof typeof HTTP_RESOURCES
   filter: any
   data: any
-  constraints?: { unique: Array<string> }
 }
 
 export interface IMongoDALDeleteArg {

@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { array, date, z } from "zod"
+import { array, boolean, date, z } from "zod"
 
 import { HTTP_RESOURCES } from "@/config/http-resources"
 
@@ -11,14 +11,34 @@ const reviewSchema = new mongoose.Schema({
 })
 
 const projectSchema = new mongoose.Schema({
-  projectName: String,
-  projectDescription: String,
-  mentorName: String,
-  techStacks: String,
-  students: Array,
-  startDate: Date,
-  endDate: Date,
-})
+  projects_name: {
+    type: String,
+    required: true,
+  },
+  projects_description: {
+    type: String,
+    required: true,
+  },
+  mentor_name: {
+    type: String,
+    required: true,
+  },
+  timelines: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      date: {
+        type: String,
+        required: true,
+      },
+      completed: {
+        type: Boolean,
+      },
+    },
+  ],
+});
 
 const teacherSchema = new mongoose.Schema<z.infer<typeof ZTeacherSchema>>(
   {
@@ -34,7 +54,7 @@ const teacherSchema = new mongoose.Schema<z.infer<typeof ZTeacherSchema>>(
 export const Reviews =
   mongoose.models.reviews || mongoose.model("reviews", reviewSchema)
 export const Projects =
-  mongoose.models.reviews || mongoose.model("projects", reviewSchema)
+  mongoose.models.projects|| mongoose.model("projects",projectSchema )
 export const Teachers =
   mongoose.models.teachers || mongoose.model("teachers", teacherSchema)
 

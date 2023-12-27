@@ -29,6 +29,7 @@ export class MongoDAL {
     resource,
   }: MongoCreateItem): Promise<{ _id: ObjectId } & T> {
     try {
+ 
       const model = getMongoSchema(resource)
       const result = await model.create(data)
       return result

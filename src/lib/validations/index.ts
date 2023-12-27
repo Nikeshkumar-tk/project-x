@@ -18,8 +18,8 @@ export const reviewSchema = z.object({
     mentor_name: z.string(),
     timelines: z.array(
         z.object({
-          description: z.string(),
-          event_date: z.string(), 
+          name: z.string(),
+          date: z.string(), 
         })
       ),
 

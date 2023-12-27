@@ -4,9 +4,15 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 
 import { getServerSession } from "next-auth"
+import { Toaster } from "sonner"
 
 import { authOptions } from "@/config/next-auth"
-import { NextThemeProvider, SessionProvider } from "@/components/providers"
+import {
+  NextThemeProvider,
+  ReactQueryProvider,
+  SessionProvider,
+  ToastProvider,
+} from "@/components/providers"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 
@@ -26,13 +32,16 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions)
   return (
     <html lang="en">
-      <body >
+      <body>
         <SessionProvider session={session}>
-          <NextThemeProvider>
-            <SiteHeader />
-            {children}
-            <SiteFooter />
-          </NextThemeProvider>
+          <ReactQueryProvider>
+            <NextThemeProvider>
+              <SiteHeader />
+              {children}
+              <ToastProvider />
+              <SiteFooter />
+            </NextThemeProvider>
+          </ReactQueryProvider>
         </SessionProvider>
       </body>
     </html>

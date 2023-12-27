@@ -1,14 +1,14 @@
-
 import Image from "next/image"
-import { heroImage } from "@/images/index"
-import { getUserSession } from "@/lib/next-auth"
 import { redirect } from "next/navigation"
+import { heroImage } from "@/images/index"
+
+import { getUserSession } from "@/lib/next-auth"
 
 export default async function Home() {
   const session = await getUserSession()
-  if(session) redirect('/app')
+  if (session) redirect("/app")
   return (
-    <main className="relative flex justify-center h-[80vh]">
+    <main className="relative flex h-[80vh] justify-center">
       <Image
         className="absolute z-10 h-full object-cover"
         src={heroImage.src}

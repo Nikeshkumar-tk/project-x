@@ -1,5 +1,5 @@
 import { z, ZodError } from "zod"
-
+import { useRouter } from 'next/router';
 import { mongo } from "@/lib/mongo/dal"
 import { createProjectSchema } from "@/lib/validations"
 import { getServerErrorFromUnknown } from "@/lib/error"
@@ -49,4 +49,32 @@ export async function POST(req: Request) {
     const error = getServerErrorFromUnknown(e)
     return Response.json(error)
   }
+}
+export async function PATCH(req: Request){
+  const requestBody = await req.json()
+  console.log(requestBody)
+  try{
+  if (!requestBody.filter || !requestBody.data) {
+    return Response.json({
+      message: "Bad response credentials are missing",
+    })
+  }
+  const createdItem = await mongo.patchItem({
+    filter:requestBody.filter,
+    resource: "projects",
+    data: requestBody.data,
+  })
+  return Response.json({
+    message: "Project updated successfully",
+    createdItem,
+  });
+
+} catch (e) {
+
+  const error = getServerErrorFromUnknown(e)
+  return Response.json(error)
+}
+  
+ 
+
 }

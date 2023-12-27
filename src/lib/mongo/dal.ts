@@ -1,7 +1,7 @@
 import { env } from "@/env.mjs"
 import mongoose, { ObjectId } from "mongoose"
 
-import { MongoCreateItem, MongoGetItem } from "@/types/mongo"
+import { MongoCreateItem, MongoGetItem,IMongoDALPatchArg } from "@/types/mongo"
 
 import { getMongoSchema } from "./utils"
 
@@ -9,7 +9,7 @@ export class MongoDAL {
   private static instance: MongoDAL
   private constructor() {
     this.init()
-    // this.getItemList = this.getItemList.bind(this);
+    this.getItemList = this.getItemList.bind(this);
     this.createItem = this.createItem.bind(this)
   }
 
@@ -36,6 +36,20 @@ export class MongoDAL {
     } catch (err) {
       console.log(err)
       throw err
+    }
+  }
+
+  async patchItem({ resource, filter, data }:IMongoDALPatchArg) {
+    try {
+      const model = getMongoSchema(resource)
+      const result = await model.findOneAndUpdate(filter,data, {
+        new: true,
+        upsert: true,
+      });
+      return result;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
   }
 

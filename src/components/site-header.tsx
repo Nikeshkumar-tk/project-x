@@ -3,10 +3,10 @@ import { DashboardIcon, ExitIcon, GearIcon } from "@radix-ui/react-icons"
 import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/config/next-auth"
-// import { dashboardConfig } from "@/config/dashboard"
 import { siteConfig } from "@/config/site"
+// import { dashboardConfig } from "@/config/dashboard"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,17 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 // import { CartSheet } from "@/components/checkout/cart-sheet"
-import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 
 import { ModeToggle } from "./mode-toggle"
 import OAuthSignInBtn from "./oauth-signin"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip"
 
 // import { MobileNav } from "@/components/layouts/mobile-nav"
 // import { ProductsCommandMenu } from "@/components/products-command-menu"
@@ -48,18 +41,6 @@ export async function SiteHeader() {
         /> */}
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button variant={"ghost"} size={"sm"}>
-                    Admin Panel
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Admin priviliage. Go to admin panel</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
             <ModeToggle />
             {session ? (
               <DropdownMenu>

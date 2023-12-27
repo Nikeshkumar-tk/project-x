@@ -1,5 +1,7 @@
+import { getServerSession } from "next-auth"
 import { z, ZodError } from "zod"
 
+import { authOptions } from "@/config/next-auth"
 import { mongo } from "@/lib/mongo/dal"
 import { reviewSchema } from "@/lib/validations"
 import { getServerErrorFromUnknown } from "@/lib/error"
@@ -34,12 +36,13 @@ export async function POST(req: Request) {
   
     const requestBody = reviewSchema.parse(await req.json());
     
-
-    if (!requestBody.reviewDescription || !requestBody.user) {
+    const session = await getServerSession(authOptions)
+    if (!session) {
       return Response.json({
-        message: "user or reviewDescription is missing",
+        message: "Unauthorized",
       })
     }
+
 
     const createdItem = await mongo.createItem<z.infer<typeof reviewSchema>>({
       resource: "reviews",

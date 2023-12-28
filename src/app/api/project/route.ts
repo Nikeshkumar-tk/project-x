@@ -3,12 +3,12 @@ import { z, ZodError } from "zod"
 
 import { getServerErrorFromUnknown } from "@/lib/error"
 import { mongo } from "@/lib/mongo/dal"
-import { createProjectSchema } from "@/lib/validations"
+import { projectSchema } from "@/lib/validations"
 
 export async function GET(req: Request) {
   try {
     const projectList = await mongo.getItemList<
-      z.infer<typeof createProjectSchema>
+      z.infer<typeof projectSchema>
     >({ resource: "projects" })
     return Response.json(projectList)
   } catch (error) {
@@ -29,10 +29,10 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const requestBody = createProjectSchema.parse(await req.json())
+    const requestBody = projectSchema.parse(await req.json())
 
     const createdItem = await mongo.createItem<
-      z.infer<typeof createProjectSchema>
+      z.infer<typeof projectSchema>
     >({
       resource: "projects",
       data: { ...requestBody },

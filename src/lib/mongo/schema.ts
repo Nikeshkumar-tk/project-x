@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { array, boolean, date, z } from "zod"
+import { any, array, boolean, date, z } from "zod"
 
 import { HTTP_RESOURCES } from "@/config/http-resources"
 
@@ -9,6 +9,14 @@ const reviewSchema = new mongoose.Schema({
   user: String,
   reviewDescription: String,
 })
+
+const userSchema = new mongoose.Schema({
+  name:String,
+  email:String,
+  image:String,
+  emailVerified:String
+})
+
 
 const projectSchema = new mongoose.Schema({
   projects_name: {
@@ -57,7 +65,8 @@ export const Projects =
   mongoose.models.projects || mongoose.model("projects", projectSchema)
 export const Teachers =
   mongoose.models.teachers || mongoose.model("teachers", teacherSchema)
-
+  export const Users =
+  mongoose.models.teachers || mongoose.model("users", userSchema)
 export const RESOURCE_SCHEMA_MAPPER: Record<
   keyof typeof HTTP_RESOURCES,
   mongoose.Model<any>
@@ -65,4 +74,5 @@ export const RESOURCE_SCHEMA_MAPPER: Record<
   reviews: Reviews,
   projects: Projects,
   teachers: Teachers,
+  users:Users
 }

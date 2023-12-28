@@ -124,13 +124,13 @@ function ProjectList() {
  <Drawer  open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
 
  <DrawerContent>
-   <div className="mx-auto w-full max-w-sm">
+   <div className="mx-auto w-full max-w-sm flex justify-center">
      <DrawerHeader>
-       <DrawerTitle>Move Goal</DrawerTitle>
-       <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+       <DrawerTitle>TimeLine</DrawerTitle>
+       {/* <DrawerDescription>.</DrawerDescription> */}
      </DrawerHeader>
    </div>
-   <ResponsiveContainer width="100%" height="500px">
+   <ResponsiveContainer width="100%" height="60%">
          <BubbleChart data={curruntRow}/>
         </ResponsiveContainer>
  </DrawerContent>

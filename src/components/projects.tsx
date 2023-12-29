@@ -1,7 +1,6 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import { useMutation } from "react-query"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -15,7 +14,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog"
 import { projectSchema } from "@/lib/validations"
-
+import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { useState } from "react"
 import { Button } from "./ui/button"
 import {
@@ -40,15 +39,23 @@ export function AddProject() {
         return await response.json()
     })
 
-    const form = useForm<ProjectSchema>({
-        resolver: zodResolver(projectSchema.omit({ timelines: true })),
-    })
+ 
+    const { register, control, handleSubmit, reset } = useForm<
+    z.infer<typeof projectSchema>
+  >({
+    defaultValues: {},
+  })
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "timelines",
+  })
+
 
     const onSubmit = (formData: ProjectSchema) => {
         createProjectMutation.mutate(formData, {
             onSuccess() {
                 toast.success("Project Created Successfully")
-                form.reset()
                 setOpenDialog(false)
             },
             onError() {
@@ -64,57 +71,46 @@ export function AddProject() {
                 <DialogHeader>
                     <DialogTitle>Add New Project</DialogTitle>
                 </DialogHeader>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="projects_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Project Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="shadcn" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="projects_description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Project Description</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Description" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="mentor_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Project Mentor</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Mentor" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <DialogFooter className="sm:justify-end">
-                            <DialogClose asChild>
-                                <Button type="button" variant="secondary">
-                                    Close
-                                </Button>
-                            </DialogClose>
-                            <Button type="submit">Submit</Button>
-                        </DialogFooter>
-                    </form>
-                </Form>
+                <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register("projects_name")} placeholder="Projects Name" />
+      <input
+        {...register("projects_description")}
+        placeholder="Projects Description"
+      />
+      <input {...register("mentor_name")} placeholder="Mentor Name" />
+      {fields.map((item, index) => (
+        <div key={item.id}>
+          <input
+            {...register(`timelines[${index}].name`)}
+            defaultValue={item.name}
+          />
+          <Controller
+            control={control}
+            name={`timelines[${index}].date`}
+            render={({ field }) => (
+              <input type="date" {...field} placeholder="Select date" />
+            )}
+          />
+          <button type="button" onClick={() => remove(index)}>
+            Remove
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        onClick={() => {
+          append({ name: "", date: "" })
+        }}
+      >
+        Add Item
+      </button>
+
+      <button type="submit">Submit</button>
+      <button type="button" onClick={() => reset()}>
+        Reset
+      </button>
+    </form>
+              
             </DialogContent>
         </Dialog>
         <Button  onClick={() => setOpenDialog(true)}>Add Project</Button>

@@ -3,11 +3,11 @@
 import React from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 
-import { createProjectSchema } from "@/lib/validations"
+import {projectSchema } from "@/lib/validations"
 
 const DynamicInputForm = () => {
   const { register, control, handleSubmit, reset } = useForm<
-    z.infer<typeof createProjectSchema>
+    z.infer<typeof projectSchema>
   >({
     defaultValues: {},
   })

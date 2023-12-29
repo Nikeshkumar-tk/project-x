@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
   email:String,
   image:String,
   emailVerified:String
-})
+}, { strict: false })
 
 
 const projectSchema = new mongoose.Schema({
@@ -66,7 +66,7 @@ export const Projects =
 export const Teachers =
   mongoose.models.teachers || mongoose.model("teachers", teacherSchema)
   export const Users =
-  mongoose.models.teachers || mongoose.model("users", userSchema)
+  mongoose.models.users || mongoose.model("users", userSchema)
 export const RESOURCE_SCHEMA_MAPPER: Record<
   keyof typeof HTTP_RESOURCES,
   mongoose.Model<any>

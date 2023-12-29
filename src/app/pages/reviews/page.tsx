@@ -1,6 +1,8 @@
 'use client'
+import { useQuery } from 'react-query';
 import { useEffect, useState } from "react"
-
+import { DataTable } from "@/components/data-table"
+import { ColumnDef } from "@tanstack/react-table"
 interface Review {
   _id: string
   user?: string
@@ -9,47 +11,32 @@ interface Review {
 }
 
 export default function Reviews() {
-  const [reviews, setReviews] = useState<Review[]>([])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch("/api/reviews")
-      const data = await response.json()
-      console.log(data)
-      setReviews(data || []) // set reviews to data directly
-    }
 
-    fetchData()
-  }, [])
+const fetchData = async () => {
+    const response = await fetch('http://localhost:3000/api/reviews');
+    const data = await response.json();
+    return data;
+  };
+const { data, isLoading, error } = useQuery('apiData', fetchData);
+const columns: ColumnDef<Review>[] = [
+  {
+    accessorKey: "user",
+    header: "User Name",
+  },
+  {
+    accessorKey: "reviewDescription",
+    header: "Review Descriptions",
+  },
+  
+]
+if (isLoading) {
+return <div>Loading...</div>;
+}
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr
-              className="rounded-lg text-left text-sm font-medium text-gray-700"
-              style={{ fontSize: "0.9674rem" }}
-            >
-              <th className="bg-gray-300 px-4 py-2">User</th>
-              <th className="bg-gray-200 px-4 py-2">Review</th>
-            </tr>
-          </thead>
-          <tbody className="text-sm font-normal text-gray-700">
-            {reviews.map((review: Review) => (
-              <tr
-                key={review._id}
-                className="border-b border-gray-200 py-10 hover:bg-gray-100"
-              >
-                <td className="bg-gray-100 px-4 py-4">{review.user || 'N/A'}</td>
-                <td className="bg-gray-100 px-4 py-4">
-                  {review.reviewDescription || 'N/A'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <div className="w-full p-5 mt-2 mb-5">
+      <DataTable columns={columns} data={data} />
     </div>
   )
 }

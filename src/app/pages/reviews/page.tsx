@@ -1,11 +1,10 @@
-"use client"
-
+'use client'
 import { useEffect, useState } from "react"
 
 interface Review {
   _id: string
-  user: string
-  reviewDescription: string
+  user?: string
+  reviewDescription?: string
   __v: number
 }
 
@@ -16,7 +15,8 @@ export default function Reviews() {
     const fetchData = async () => {
       const response = await fetch("/api/reviews")
       const data = await response.json()
-      setReviews(data.reviewList) // fixed -- set reviews to data.reviewList instead of data
+      console.log(data)
+      setReviews(data || []) // set reviews to data directly
     }
 
     fetchData()
@@ -41,9 +41,9 @@ export default function Reviews() {
                 key={review._id}
                 className="border-b border-gray-200 py-10 hover:bg-gray-100"
               >
-                <td className="bg-gray-100 px-4 py-4">{review.user}</td>
+                <td className="bg-gray-100 px-4 py-4">{review.user || 'N/A'}</td>
                 <td className="bg-gray-100 px-4 py-4">
-                  {review.reviewDescription}
+                  {review.reviewDescription || 'N/A'}
                 </td>
               </tr>
             ))}

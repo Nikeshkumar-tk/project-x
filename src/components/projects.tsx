@@ -41,6 +41,7 @@ export function AddProject() {
       onSuccess() {
         toast.success("Project Created Successfully");
         setOpenDialog(false);
+        ()=>{reset()}
       },
       onError() {
         toast.error("Something went wrong while adding project");

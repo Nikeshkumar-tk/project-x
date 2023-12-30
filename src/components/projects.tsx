@@ -44,7 +44,7 @@ export function AddProject() {
         ()=>{reset()}
       },
       onError() {
-        toast.error("Something went wrong while adding project");
+        toast.error("Something went wrong while adding the project");
       },
     });
   };
@@ -58,25 +58,19 @@ export function AddProject() {
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="flex flex-col space-y-2">
-              <label htmlFor="projects_name" className="text-sm font-medium text-gray-300">Projects Name</label>
-              <Input {...register("projects_name")} 
-              // placeholder="Projects Name" 
-              className="p-2 border border-gray-300 rounded-md" />
+              <label className="text-sm font-medium text-gray-300">Project Name</label>
+              <Input {...register("projects_name")} className="p-2 border border-gray-300 rounded-md" />
             </div>
             <div className="flex flex-col space-y-2">
-              <label htmlFor="projects_description" className="text-sm font-medium text-gray-300">Projects Description</label>
-              <Input {...register("projects_description")} 
-              // placeholder="Projects Description"
-               className="p-2 border border-gray-300 rounded-md" />
+              <label className="text-sm font-medium text-gray-300">Project Description</label>
+              <Input {...register("projects_description")} className="p-2 border border-gray-300 rounded-md" />
             </div>
             <div className="flex flex-col space-y-2">
-              <label htmlFor="mentor_name" className="text-sm font-medium text-gray-300">Mentor Name</label>
-              <Input {...register("mentor_name")} 
-              // placeholder="Mentor Name"
-               className="p-2 border border-gray-300 rounded-md" />
+              <label className="text-sm font-medium text-gray-300">Mentor Name</label>
+              <Input {...register("mentor_name")} className="p-2 border border-gray-300 rounded-md" />
             </div>
             {fields.map((item, index) => (
-              <div key={item.id} className="flex space-x-4">
+              <div key={item.id} className="flex space-x-4 items-center">
                 <Input {...register(`timelines[${index}].name`)} defaultValue={item.name} className="flex-1 p-2 border border-gray-300 rounded-md" />
                 <Controller
                   control={control}
@@ -85,13 +79,14 @@ export function AddProject() {
                     <input type="date" {...field} placeholder="Select date" className="flex-1 p-2 border border-gray-300 rounded-md" />
                   )}
                 />
-                <Button type="button" onClick={() => remove(index)} className="p-2 bg-red-800 text-white rounded-md">
+                <Button type="button" onClick={() => remove(index)} className="p-2 bg-red-800 text-white">
                   Remove
                 </Button>
               </div>
             ))}
             <div className="flex gap-2">
               <Button
+                className="hover:bg-blue-900 bg-blue-800 text-white"
                 type="button"
                 onClick={() => {
                   append({ name: "", date: "" });
@@ -99,15 +94,24 @@ export function AddProject() {
               >
                 Add Item
               </Button>
-              <Button type="submit">Submit</Button>
-              <Button type="button" onClick={() => reset()}>
+              <Button
+                className="hover:bg-green-800 bg-green-700 text-white"
+                type="submit">
+                Submit
+              </Button>
+              <Button
+                className="hover:bg-red-800 bg-red-700 text-white"
+                type="button"
+                onClick={() => reset()}>
                 Reset
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
-      <Button onClick={() => setOpenDialog(true)}>Add Project</Button>
+      <Button className="hover:bg-blue-900 bg-blue-800 text-white" onClick={() => setOpenDialog(true)}>
+        Add Project
+      </Button>
     </>
   );
 }
